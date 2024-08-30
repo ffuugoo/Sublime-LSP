@@ -546,7 +546,10 @@ class DocumentSyncListener(sublime_plugin.ViewEventListener, AbstractViewListene
             sublime.set_timeout_async(lambda: self.do_signature_help_async(manual=True))
         if not self.view.is_popup_visible():
             return
-        if command_name in ["hide_auto_complete", "move", "commit_completion"] or 'delete' in command_name:
+        if self.view.is_auto_complete_visible() and command_name == "move" and args and args.get("by") == "lines":
+            # do not hide the popup when selecting completions
+            return
+        if command_name == "move" or 'delete' in command_name:
             # hide the popup when `esc` or arrows are pressed pressed
             self.view.hide_popup()
 
